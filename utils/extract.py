@@ -18,14 +18,17 @@ USER_ID = os.getenv('USER_ID')
 TOKEN = os.getenv('TOKEN')
 
 def extract_data():
+    """
+    Function that allows the download of information from 
+    Spotify
+    """
+
     ### Prepare the headers ###
     headers = {
         'Accept': 'application/json',
         'Content-Type': 'application/json',
         'Authorization': f'Bearer {TOKEN}'
     }
-
-    print(headers)
 
     #### Calculate the period after we want ###
     # We grab today
@@ -44,7 +47,6 @@ def extract_data():
 
     # Grab the data
     data = r.json()
-    print(data)
 
     # The fields we are looking for
     song_names = []
