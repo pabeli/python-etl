@@ -1,6 +1,5 @@
 import os
 import pandas as pd
-from sqlalchemy.orm import sessionmaker
 import requests
 import datetime
 from datetime import timedelta
