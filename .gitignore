@@ -1,1 +1,4 @@
+# Virtual environment
 /env
+# Env variables
+.env
