@@ -10,6 +10,7 @@ import sqlite3
 from datetime import timedelta
 
 from utils.extract import extract_data
+from utils.validation import check_if_valid_data
 
 # Env variables
 from dotenv import load_dotenv
@@ -24,40 +25,12 @@ USER_ID = os.getenv('USER_ID')
 # Token generated on Spotify for Developers
 TOKEN = os.getenv('TOKEN')
 
-def check_if_valid_data(df: pd.DataFrame):
-    """
-    Function to check if the date is in a valid format
-    """
-    # Check if the DataFrame is empty
-    if df.empty:
-        print('No songs in the past 24hs!')
-        return False
-    
-    # Since you can't simultaneously listen to 2 different songs
-    # our primary key is played_at
-    if not pd.Series(df['played_at']).is_unique:
-        # If the played at is not unique, then primary key check is violated
-        raise Exception('Primary key check is violated!')
-    
-    # Check for empty values
-    if df.isnull().values.any():
-        raise Exception('Null values!')
 
-    # Check we are only saving songs from yesterday
-    today = datetime.datetime.now()
-    yesterday = today - datetime.timedelta(days=1)
-    yesterday = yesterday.replace(hour=0, minute=0, second=0, microsecond=0)
-
-    timestamps = df['timestamp'].tolist()
-    for timestamp in timestamps:
-        if datetime.datetime.strptime(timestamp, '%Y-%m-%d') != yesterday:
-            raise Exception('At least one song does not come from the last 24 hourse')
 
 if __name__ == '__main__':
 
     # The extract process
     song_df = extract_data()
-
 
     # Validate
     if check_if_valid_data(song_df):
