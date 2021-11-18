@@ -1,9 +1,9 @@
 import os
 import sqlalchemy
 import pandas as pd
+from sqlalchemy import Table, Column, Integer, String, MetaData
 from sqlalchemy.orm import sessionmaker
 import requests
-import json
 import datetime
 import sqlite3
 from datetime import date
@@ -51,7 +51,6 @@ def check_if_valid_data(df: pd.DataFrame):
     for timestamp in timestamps:
         if datetime.datetime.strptime(timestamp, '%Y-%m-%d') != yesterday:
             raise Exception('At least one song does not come from the last 24 hourse')
-
 
 if __name__ == '__main__':
     # Prepare the request object
@@ -104,5 +103,37 @@ if __name__ == '__main__':
         )
 
     # Validate
-    if check_if_valid_data(song_df):
-        print('Data valid, proceed')
+    #if check_if_valid_data(song_df):
+    #    print('Data valid, proceed')
+
+    # Load
+    # Create the database
+    engine = sqlalchemy.create_engine(DATABASE_LOCATION)
+    # Create the connection
+    conn = sqlite3.connect('myplayedtracks.sqlite')
+    # Create the pointer to direct to specific rows into the database
+    cursor = conn.cursor()
+    # Metadata object that will hold the table
+    meta = MetaData(engine)
+    # If the table does not exist
+    insp = sqlalchemy.inspect(engine)
+    if not insp.has_table('my_played_tracks'):
+        # Create the table
+        sql_create_table = Table(
+            'my_played_tracks',
+            meta,
+            Column('song_name', String),
+            Column('artist_name', String),
+            Column('played_at', String, primary_key = True),
+            Column('timestamp', String)
+        )
+    meta.create_all()
+    
+    try:
+        song_df.to_sql('my_played_tracks', engine, index=False, if_exists='append')
+    except:
+        print('Data already exists in the database')
+    
+    conn.close()
+
+    print('Close database successfully')
