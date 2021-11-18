@@ -40,7 +40,6 @@ def extract_data():
     
     # We get the unix timestamp
     yesterday_unix_timestamp = int(yesterday.timestamp())
-    print(yesterday_unix_timestamp)
     
     ### Perform the request ###
     r = requests.get("https://api.spotify.com/v1/me/player/recently-played?after={time}".format(time=yesterday_unix_timestamp), headers = headers)

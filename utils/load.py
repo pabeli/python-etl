@@ -4,7 +4,10 @@ import pandas as pd
 from sqlalchemy import Table, Column, String, MetaData
 from sqlalchemy.orm import sessionmaker
 import sqlite3
+import logging
 
+# Logger initialization
+logging.basicConfig(format='[%(levelname)s]: %(message)s', level=logging.DEBUG)
 
 # Env variables
 from dotenv import load_dotenv
@@ -16,7 +19,9 @@ load_dotenv()
 DATABASE_LOCATION = os.getenv('DATABASE_LOCATION')
 
 def load_data(song_df: pd.DataFrame):
-    # Load
+    """
+    Function that allows loading data into database
+    """
     # Create the database
     engine = sqlalchemy.create_engine(DATABASE_LOCATION)
     # Create the connection
@@ -42,8 +47,8 @@ def load_data(song_df: pd.DataFrame):
     try:
         song_df.to_sql('my_played_tracks', engine, index=False, if_exists='append')
     except:
-        print('Data already exists in the database')
+        logging('Data already exists in the database')
     
     conn.close()
 
-    print('Close database successfully')
+    logging('Close database successfully')
