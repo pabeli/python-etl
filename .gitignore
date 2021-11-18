@@ -4,3 +4,5 @@
 .env
 # Database
 *.sqlite
+# PyCache
+__pycache__

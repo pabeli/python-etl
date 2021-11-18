@@ -9,6 +9,8 @@ import sqlite3
 
 from datetime import timedelta
 
+from utils.extract import extract_data
+
 # Env variables
 from dotenv import load_dotenv
 
@@ -52,59 +54,10 @@ def check_if_valid_data(df: pd.DataFrame):
             raise Exception('At least one song does not come from the last 24 hourse')
 
 if __name__ == '__main__':
-    # Prepare the request object
-    headers = {
-        'Accept': 'application/json',
-        'Content-Type': 'application/json',
-        'Authorization': f'Bearer {TOKEN}'
-    }
 
-    #### Calculate the period after we want ###
-    # We grab today
-    today = datetime.datetime.now()
-    ## Since we want to run this daily, we will need yesteday
-    ## to see the amount of time we will need the API to give us the information
-    yesterday = today - timedelta(days=1)
-    # We get the unix timestamp   
-    yesterday_unix_timestamp = int(yesterday.timestamp())
-    print(yesterday_unix_timestamp)
+    # The extract process
+    song_df = extract_data()
 
-    # Perform the request
-    r = requests.get(
-        f"https://api.spotify.com/v1/me/player/recently-played?after={yesterday_unix_timestamp})", 
-        headers = headers)
-
-    # Grab the data
-    data = r.json()
-    
-    # The fields we are looking for
-    song_names = []
-    artist_names = []
-    played_at_list = []
-    timestamps = []
-
-    # Loop through each song to get the info we want
-    for song in data['items']:
-        song_names.append(song['track']['name'])
-        artist_names.append(song['track']['album']['artists'][0]['name'])
-        played_at_list.append(song['played_at'])
-        timestamps.append(song['played_at'][0:10])
-    
-    # Create the dict in order to create the pandas dataframe
-    song_dict = {
-        'song_name': song_names,
-        'artist_name': artist_names,
-        'played_at': played_at_list,
-        'timestamp': timestamps
-    }
-
-    # Songs dataframe
-    song_df = pd.DataFrame(
-        song_dict,
-        columns = ['song_name', 'artist_name', 'played_at', 'timestamp']
-        )
-    
-    print(song_df)
 
     # Validate
     if check_if_valid_data(song_df):
