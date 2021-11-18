@@ -6,7 +6,7 @@ from sqlalchemy.orm import sessionmaker
 import requests
 import datetime
 import sqlite3
-from datetime import date
+
 from datetime import timedelta
 
 # Env variables
@@ -45,7 +45,6 @@ def check_if_valid_data(df: pd.DataFrame):
     today = datetime.datetime.now()
     yesterday = today - datetime.timedelta(days=1)
     yesterday = yesterday.replace(hour=0, minute=0, second=0, microsecond=0)
-    print(yesterday)
 
     timestamps = df['timestamp'].tolist()
     for timestamp in timestamps:
@@ -65,12 +64,15 @@ if __name__ == '__main__':
     today = datetime.datetime.now()
     ## Since we want to run this daily, we will need yesteday
     ## to see the amount of time we will need the API to give us the information
-    yesterday = today - datetime.timedelta(days=1)
-    # We get the unix timestamp
-    yesterday_unix_timestamp = int(yesterday.timestamp()) * 1000
+    yesterday = today - timedelta(days=1)
+    # We get the unix timestamp   
+    yesterday_unix_timestamp = int(yesterday.timestamp())
+    print(yesterday_unix_timestamp)
 
     # Perform the request
-    r = requests.get(f"https://api.spotify.com/v1/me/player/recently-played?after={yesterday_unix_timestamp}", headers = headers)
+    r = requests.get(
+        f"https://api.spotify.com/v1/me/player/recently-played?after={yesterday_unix_timestamp})", 
+        headers = headers)
 
     # Grab the data
     data = r.json()
@@ -101,10 +103,12 @@ if __name__ == '__main__':
         song_dict,
         columns = ['song_name', 'artist_name', 'played_at', 'timestamp']
         )
+    
+    print(song_df)
 
     # Validate
-    #if check_if_valid_data(song_df):
-    #    print('Data valid, proceed')
+    if check_if_valid_data(song_df):
+        print('Data valid, proceed')
 
     # Load
     # Create the database
