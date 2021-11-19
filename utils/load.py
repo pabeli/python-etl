@@ -47,8 +47,8 @@ def load_data(song_df: pd.DataFrame):
     try:
         song_df.to_sql('my_played_tracks', engine, index=False, if_exists='append')
     except:
-        logging('Data already exists in the database')
+        logging.info('Data already exists in the database')
     
     conn.close()
 
-    logging('Close database successfully')
+    logging.info('Close database successfully')
