@@ -2,7 +2,7 @@
 
 In the following repo, you will find a simple ETL process, using different kinds of tools, but basically, `Python`.
 
-The goal is to download yesterday's data from Spotify, check if it success the validation process and finally, load the information needed into the database.
+The goal is download yesterday's data from Spotify, check if the validation process is approved and finally, load the information needed into the database.
 
 You will need to create a copy from the `.env.example` and call it `env`. There you can put your personal information (`TOKEN`, `USER-ID`,etc.). 
 
