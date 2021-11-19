@@ -35,21 +35,10 @@ def extract_data():
         'Authorization': f'Bearer {TOKEN}'
     }
 
-    #### Calculate the period after we want ###
-    # We grab today
-    today = datetime.datetime.now()
-    
-    # Since we want to run this daily, we will need yesteday
-    # to see the amount of time we will need the API to give us the information
-    yesterday = today - timedelta(days=1)
-    
-    # We get the unix timestamp
-    yesterday_unix_timestamp = int(yesterday.timestamp())
-    
     ### Perform the request ###
     try:
         r = requests.get(
-            f"https://api.spotify.com/v1/me/player/recently-played?after={yesterday_unix_timestamp}&limit=10",
+            f"https://api.spotify.com/v1/me/player/recently-played",
             headers = headers)
     except:
         raise Exception(f'The Spotify request went wrong')
@@ -59,19 +48,29 @@ def extract_data():
 
     # Grab the data
     data = r.json()
-
+    
     # The fields we are looking for
     song_names = []
     artist_names = []
     played_at_list = []
     timestamps = []
 
-    # Loop through each song to get the info we want
+    ### Calculate the period after we want ###
+    # We grab today
+    today = datetime.datetime.now()
+    
+    # Since we want to run this daily, we will need yesteday
+    yesterday = today - timedelta(days=1)
+
+    ### Loop through each song to get the info we want ###
     for song in data['items']:
-        song_names.append(song['track']['name'])
-        artist_names.append(song['track']['album']['artists'][0]['name'])
-        played_at_list.append(song['played_at'])
-        timestamps.append(song['played_at'][0:10])
+        if yesterday.strftime('%Y-%m-%d') == song['played_at'][0:10]:
+            # We just want to grab songs from yesterday
+            song_names.append(song['track']['name'])
+            artist_names.append(song['track']['album']['artists'][0]['name'])
+        
+            played_at_list.append(song['played_at'])
+            timestamps.append(song['played_at'][0:10])
     
     # Create the dict in order to create the pandas dataframe
     song_dict = {
