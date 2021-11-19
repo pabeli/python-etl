@@ -11,3 +11,11 @@ You will need to create a copy from the `.env.example` and call it `env`. There 
 
 # Spotify API
 Here we will use the Spotify API. You will need to grab you `USER-ID` and generate a `TOKEN` in order to use it. 
+
+# Installation steps
+1. Clone the repository
+1. Create a virtual environment called `env`
+1. Activate the environment and install the requirements with `pip install -r requirements.txt`
+1. Copy the `.env.example` and call it `env`
+1. Change the variables for the ones that you need: `DATABASE_LOCATION`, and from Spotify, `USER_ID`, `TOKEN`.
+1. Then, you can run your code with `python3 main.py`
