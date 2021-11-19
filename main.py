@@ -15,7 +15,7 @@ if __name__ == '__main__':
     # Validation process
     logging.info('Starting validation process...')
     if check_if_valid_data(song_df):
-        print('Data valid, proceed')
+        logging.info('Data valid, proceed')
 
     # Loading data process
     logging.info('Starting loading process...')
