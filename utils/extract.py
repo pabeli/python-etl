@@ -3,12 +3,17 @@ import pandas as pd
 import requests
 import datetime
 from datetime import timedelta
-
+import logging
 # Env variables
 from dotenv import load_dotenv
 
+
+# Logger initialization
+logging.basicConfig(format='[%(levelname)s]: %(message)s', level=logging.DEBUG)
+
 # Recover env variables
 load_dotenv()
+
 
 # Database Location
 DATABASE_LOCATION = os.getenv('DATABASE_LOCATION')
@@ -42,7 +47,15 @@ def extract_data():
     yesterday_unix_timestamp = int(yesterday.timestamp())
     
     ### Perform the request ###
-    r = requests.get("https://api.spotify.com/v1/me/player/recently-played?after={time}".format(time=yesterday_unix_timestamp), headers = headers)
+    try:
+        r = requests.get(
+            f"https://api.spotify.com/v1/me/player/recently-played?after={yesterday_unix_timestamp}&limit=10",
+            headers = headers)
+    except:
+        raise Exception(f'The Spotify request went wrong')
+    
+    if r.status_code != 200:
+        raise Exception(f'Something in the Spotify request went wrong: {r.status_code}')
 
     # Grab the data
     data = r.json()
@@ -73,6 +86,8 @@ def extract_data():
         song_dict,
         columns = ['song_name', 'artist_name', 'played_at', 'timestamp']
         )
+
+    logging.info(song_df)
     
     return song_df
     
