@@ -19,3 +19,5 @@ Here we will use the Spotify API. You will need to grab you `USER-ID` and genera
 1. Copy the `.env.example` and call it `env`
 1. Change the variables for the ones that you need: `DATABASE_LOCATION`, and from Spotify, `USER_ID`, `TOKEN`.
 1. Then, you can run your code with `python3 main.py`
+
+Python version: `3.9.5`
